@@ -915,22 +915,26 @@
                     <div class="mt-3">
                       <div>
                         <Swiper
-                          :slides-per-view="2.5"
-                          space-between="15"
-                          :breakpoints="{
-                            320: {
-                              slidesPerView: 2,
-                              spaceBetween: 5,
-                            },
-                            768: {
-                              slidesPerView: 2.5,
-                              spaceBetween: 10,
-                            },
-                            1024: {
-                              slidesPerView: 2.5,
-                              spaceBetween: 15,
-                            },
-                          }"
+                        :slides-per-view="2.5"
+                        space-between="20"
+                        :breakpoints="{
+                          320: {
+                            slidesPerView: 2,
+                            spaceBetween: 10,
+                          },
+                          419: {
+                            slidesPerView: 2.2,
+                            spaceBetween: 20,
+                          },
+                          768: {
+                            slidesPerView: 3,
+                            spaceBetween: 15,
+                          },
+                          1024: {
+                            slidesPerView: 2.5,
+                            spaceBetween: 20,
+                          },
+                        }"
                           class="mySwiper !py-2 !px-0 md:!py-3 md:!px-3"
                           loop="true"
                         >
@@ -954,10 +958,10 @@
                                   />
                                   <div
                                     v-if="isDisabled"
-                                    class="absolute inset-0 bg-black bg-opacity-50"
+                                    class="absolute inset-0 bg-gray-200 bg-opacity-80"
                                   >
                                     <div
-                                      class="absolute top-1 right-2 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-gray-200 bg-opacity-50 flex items-center justify-center"
+                                      class="absolute top-3 right-2 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-black bg-opacity-50 flex items-center justify-center"
                                     >
                                       <Icon
                                         name="material-symbols:lock-outline-sharp"

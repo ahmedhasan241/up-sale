@@ -446,4 +446,6 @@ object-fit: cover;
     flex-direction: row-reverse !important; /* Add this line to reverse the flex items */
 }
 
-  
+body {
+    font-family: "Almarai", sans-serif !important;
+}
