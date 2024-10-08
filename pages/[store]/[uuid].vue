@@ -726,10 +726,10 @@
                           <SwiperSlide
                             v-for="bundle in bundles"
                             :key="bundle.id"
-                            class="!h-44"
+                            class="!h-48 pt-2 box-border"
                           >
                             <Card
-                              class="cursor-pointer p-1 !w-full !h-[95%] my-auto !rounded-lg transition-all duration-300 shadow-sm hover:shadow-lg"
+                              class="cursor-pointer p-1 !w-full !h-[90%] mt-1 !rounded-lg transition-all duration-300 shadow-sm hover:shadow-lg"
                               :class="{
                                 'border-2 border-black card-shadow': selectedBundles.some(
                                   (item) => item.id === bundle.id
@@ -916,7 +916,7 @@
                       <div>
                         <Swiper
                           :slides-per-view="2.5"
-                          space-between="10"
+                          space-between="15"
                           :breakpoints="{
                             320: {
                               slidesPerView: 2,
@@ -928,19 +928,19 @@
                             },
                             1024: {
                               slidesPerView: 2.5,
-                              spaceBetween: 10,
+                              spaceBetween: 15,
                             },
                           }"
-                          class="mySwiper !p-0 md:!p-3"
+                          class="mySwiper !py-2 !px-0 md:!py-3 md:!px-3"
                           loop="true"
                         >
                           <SwiperSlide v-for="gift in gifts" :key="gift.id" class="!h-44">
                             <Card
-                              class="cursor-pointer p-2 h-full !w-full !rounded-lg transition-all duration-300 hover:shadow-lg"
+                              class="cursor-pointer p-2 h-full !w-full !rounded-lg transition-all duration-300 hover:shadow-lg card-shadow-gift"
                               :class="{
-                                'border-2 border-black':
+                                'border-2 border-black ':
                                   selectedGift.id === gift.id || !isDisabled,
-                                'border-2 border-gray-200':
+                                'border-2 border-white ':
                                   selectedGift.id !== gift.id || isDisabled,
                               }"
                               @click="toggleSelectGift(gift)"
