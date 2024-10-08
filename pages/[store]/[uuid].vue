@@ -416,35 +416,37 @@
                             v-for="bundle in selectedBundles"
                             :key="bundle.id"
                           >
-                            <div class="grid grid-cols-4 bundle">
-                              <div class="col-span-2 flex justify-start items-center" >
+                            <div class="grid grid-cols-2 bundle">
+                              <div class="flex justify-start items-center" >
                                 <h2
                                   class="text-black font-almarai text-[12px] font-bold leading-[14.4px]"
                                 >
                                   {{ bundle.name_ar }}
                                 </h2>
                               </div>
-                              <div class="flex justify-center  items-center">
+                    
+
+                              <div class="flex justify-end gap-2  items-center">
+                                <div>
+                                  <h2
+                                  class="text-black font-almarai text-[12px] font-bold leading-[14.4px] mr-2"
+                                >
+                                  {{ bundle.price }} ر.س
+                                </h2>
+                                </div>
+              
+                           
+                              <div class="rounded-lg bg-red-100 !h-[26px] mt-2 !w-[26px] flex justify-center items-center">
               
                                 <button
-                                @click="removeBundle(bundle.id)"
-                                class="text-black  mt-1"
+                                  @click="removeBundle(bundle.id)"
+                                class="text-red-600  mt-1 h-6 w-6"
                                 aria-label="Remove Bundle"
                               >
                                 <!-- Replace with your desired icon -->
-                                <Icon name="material-symbols:cancel-rounded" />
+                                <Icon name="material-symbols:delete-outline" />
                               </button>
-                        
                               </div>
-
-                              <div class="flex justify-end  items-center">
-              
-                                <h2
-                                class="text-black font-almarai text-[12px] font-bold leading-[14.4px] mr-2"
-                              >
-                                {{ bundle.price }} ر.س
-                              </h2>
-                        
                               </div>
    
                             </div>
@@ -452,57 +454,65 @@
 
                           <div
                             v-if="selectedGift.name_ar && !isDisabled"
-                            class="grid grid-cols-4 gift"
+                            class="grid grid-cols-2 gift items-center"
                           >
-                            <div class="col-span-2 flex justify-start items-center">
+                            <div class=" flex justify-start items-center">
                               <h2
                                 class="text-black font-almarai text-[12px] font-bold leading-[14.4px]"
                               >
                                 {{ selectedGift.name_ar }}
                               </h2>
                             </div>
-                            <div class="flex justify-center  items-center">
-              
-                              <button
-                              @click="removeGift()"
-                              class="text-black  mt-1"
-                              aria-label="Remove Bundle"
+                  
+                            <div class="flex justify-end gap-2  items-center">
+                              <div class="flex flex-col gap-0 ">
+                                <div>
+                                  <h2
+                                  v-if="     campaignInfo.discount_type !== 'percentage' &&
+                                  selectedGift.id !== 'has_discount' "
+                                  class="text-black font-almarai text-[9px] md:text-[10px] font-bold leading-[14.4px]"
+                                >
+                                  {{ selectedGift.price }}
+                                  <span
+                                    v-if="
+                                      campaignInfo.discount_type !== 'percentage' &&
+                                      selectedGift.id !== 'has_discount'
+                                    "
+                                    >ر.س</span
+                                  >
+                                </h2>
+                                </div>
+                          <div>
+                            <h2
+                            v-if="     campaignInfo.discount_type !== 'percentage' &&
+                            selectedGift.id !== 'has_discount' "
+                            class="line-through text-gray-500 font-almarai text-[9px] md:text-[10px] font-bold leading-[14.4px]"
+                          >
+                            {{ selectedGift.price_before_discount }}
+                            <span
+                              v-if="
+                                campaignInfo.discount_type !== 'percentage' &&
+                                selectedGift.id !== 'has_discount'
+                              "
+                              >ر.س</span
                             >
-                              <!-- Replace with your desired icon -->
-                              <Icon name="material-symbols:cancel-rounded" />
-                            </button>
-                      
+                          </h2>
+                          </div>
+                              </div>
+                   
+                        <div class="rounded-lg bg-red-100 !h-[26px] mt-2 !w-[26px] flex justify-center items-center">
+              
+                          <button
+                          @click="removeGift()"
+                          class="text-red-600  mt-1 h-6 w-6"
+                          aria-label="Remove Bundle"
+                        >
+                          <!-- Replace with your desired icon -->
+                          <Icon name="material-symbols:delete-outline" />
+                        </button>
+                        </div>
                             </div>
-                            <div class="flex justify-end gap-1  items-center">
-                              <h2
-                                v-if="     campaignInfo.discount_type !== 'percentage' &&
-                                selectedGift.id !== 'has_discount' "
-                                class="text-black font-almarai text-[9px] md:text-[10px] font-bold leading-[14.4px]"
-                              >
-                                {{ selectedGift.price }}
-                                <span
-                                  v-if="
-                                    campaignInfo.discount_type !== 'percentage' &&
-                                    selectedGift.id !== 'has_discount'
-                                  "
-                                  >ر.س</span
-                                >
-                              </h2>
-                              <h2
-                                v-if="     campaignInfo.discount_type !== 'percentage' &&
-                                selectedGift.id !== 'has_discount' "
-                                class="line-through text-gray-500 font-almarai text-[9px] md:text-[10px] font-bold leading-[14.4px]"
-                              >
-                                {{ selectedGift.price_before_discount }}
-                                <span
-                                  v-if="
-                                    campaignInfo.discount_type !== 'percentage' &&
-                                    selectedGift.id !== 'has_discount'
-                                  "
-                                  >ر.س</span
-                                >
-                              </h2>
-                            </div>
+                   
                           </div>
                         </div>
                       </div>
@@ -558,28 +568,25 @@
                     >
                       تأكيد رقم الجوال
                     </label>
-                    <div class="flex  mb-3">
-                      <button
-                        class="bg-black text-white py-[9px] px-[24px] !rounded-r-[4px] rounded-l-[0px] font-almarai text-[12px] font-bold leading-[14.4px] flex items-center justify-center"
+                    <div class="flex mb-3">
+                      <a-input-group class="phone-input" compact>
+                        <a-select v-model:value="value1" style="width: 20%">
+                          <a-select-option value="+966">+966</a-select-option>
+                          <a-select-option value="+20">+20</a-select-option>
+                        </a-select>
+                        <a-input v-model:value="value2" style="width: 65%" />
+                        <a-button       class="bg-black text-white py-[9px] px-[10px] sm:px-[18px] md:px-[24px] !rounded-r-[4px] font-almarai text-[12px] font-bold leading-[14.4px] flex items-center text-center justify-center"
                         type="button"
                         id="button-addon1"
                         @click="verifyPhone"
                         :disabled="isLoadingPhone || otpConfirmed"
-                      >
-                        <template v-if="isLoadingPhone">
-                          <!-- EOS loading icon from nuxt-icon -->
+                        style="width: 15%;">  <template v-if="isLoadingPhone">
                           <Icon name="eos-icons:loading" class="animate-spin w-4 h-4" />
                         </template>
-                        <template v-else> تأكيد </template>
-                      </button>
-                 
-                      <a-input-group     class="phone-input" compact>
-                        <!-- <a-input v-model:value="value1"  readonly /> -->
-                        <a-select v-model:value="value1" style="width: 25%" >
-                          <a-select-option value="+966">+966</a-select-option>
-                          <a-select-option value="+20">+20</a-select-option>
-                        </a-select>
-                        <a-input v-model:value="value2" style="width: 75%"   />
+                        <template v-else>
+                          <span class="mx-auto">تأكيد</span>
+                        </template></a-button>
+
                       </a-input-group>
                     </div>
                     <div v-if="errorPhone" class="text-red-500 mt-2">
@@ -719,10 +726,10 @@
                           <SwiperSlide
                             v-for="bundle in bundles"
                             :key="bundle.id"
-                            class="!h-40"
+                            class="!h-44"
                           >
                             <Card
-                              class="cursor-pointer p-1 !w-full !h-[100%] !rounded-lg transition-all duration-300 shadow-sm hover:shadow-lg"
+                              class="cursor-pointer p-1 !w-full !h-[95%] my-auto !rounded-lg transition-all duration-300 shadow-sm hover:shadow-lg"
                               :class="{
                                 'border-2 border-black card-shadow': selectedBundles.some(
                                   (item) => item.id === bundle.id
@@ -800,14 +807,14 @@
                               class="!text-black text-[16px] md:!text-[14px] cursor-pointer"
                             />
                           </div>
-                          <div class="max-h-[350px] overflow-y-auto">
+                          <div class="max-h-[400px] overflow-y-auto">
                             <div
-                              class="flex flex-col gap-4"
+                              class="flex flex-col gap-6"
                               v-for="bundle in bundles"
                               :key="bundle.id"
                             >
                               <div
-                                class="form-check form-check-reverse rounded-md flex items-center justify-center !my-2"
+                                class="form-check form-check-reverse rounded-md flex items-center justify-center !my-3"
                                 :class="{
                                   'card-shadow': selectedBundles.some(
                                     (item) => item.id === bundle.id
@@ -1438,6 +1445,7 @@ const submitOtp = async () => {
     if (data.value.status === true) {
       showOtpPopup.value = false;
       otpConfirmed.value = true;
+      otpCodeNumber.value = ''
       errors.otp = null;
     } else {
       errorVerify.value = data.value.message;
