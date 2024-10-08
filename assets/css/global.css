@@ -360,7 +360,7 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    background-color: white !important;
+    background-color : white  !important;
 }
 
 .footer-contain .btn-Buy {
@@ -421,3 +421,19 @@ object-fit: cover;
         margin: 0 auto;
     }
   }
+
+
+  .v-otp-input__content {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    height: 64px;
+    padding: 0.5rem;
+    justify-content: center;
+    max-width: 320px;
+    position: relative;
+    border-radius: inherit;
+    flex-direction: row-reverse !important; /* Add this line to reverse the flex items */
+}
+
+  

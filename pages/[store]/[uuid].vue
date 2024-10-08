@@ -572,14 +572,7 @@
                         </template>
                         <template v-else> تأكيد </template>
                       </button>
-                      <!-- <input
-                        type="text"
-                     
-                        placeholder="201236594781"
-                        v-model="form.phoneNumber"
-                        aria-label="Example text with button addon"
-                        aria-describedby="button-addon1"
-                      /> -->
+                 
                       <a-input-group     class="phone-input" compact>
                         <!-- <a-input v-model:value="value1"  readonly /> -->
                         <a-select v-model:value="value1" style="width: 25%" >
@@ -611,7 +604,7 @@
                             ادخل رمز التحقق
                           </h3>
                           <div ref="otpCont" class="inputs-contain">
-                            <input
+                            <!-- <input
                               type="text"
                               class="digit-box"
                               v-for="(el, ind) in digits"
@@ -621,8 +614,13 @@
                               maxlength="1"
                               @input="handleInput($event, ind)"
                               @keydown="handleBackspace($event, ind)"
-                            />
+                            /> -->
                           </div>
+                          <v-otp-input
+                          length="5"
+                          class="otp-inputs"
+                          v-model="otpCodeNumber"
+                        ></v-otp-input>
                           <div v-if="errorVerify" class="text-lg text-red-500 mt-2">
                             {{ errorVerify }}
                           </div>
@@ -1281,7 +1279,7 @@ function toggleModal() {
   showModal.value = !showModal.value;
 }
 const digits = reactive(Array(5).fill(null)); // Initialize with 5 null values
-
+const otpCodeNumber = ref()
 const otpCont = ref(null);
 
 // Handle input event to restrict to numbers and focus the next input if filled
@@ -1423,7 +1421,7 @@ const submitOtp = async () => {
   try {
     const body = {
       whatsapp_number: form.phoneNumber,
-      otp: otp,
+      otp: otpCodeNumber.value,
     };
 
     const { data } = await useFetch("https://up.ft.sa/api/v1/campaign/verify/otp", {
@@ -1452,15 +1450,12 @@ const submitOtp = async () => {
   // Close the popup after submission
 };
 watch(
-  digits,
-  (newDigits) => {
-    const otp = newDigits.join(""); // Join the digits to form the OTP string
-    if (otp.length === 5 && /^\d+$/.test(otp)) {
-      // Check if OTP is 5 digits and contains only numbers
-      submitOtp(); // Run the submitOtp function
+  otpCodeNumber,
+  (newCode) => {
+    if (newCode.length === 5 && /^\d+$/.test(newCode)) {
+      submitOtp(); 
     }
-  },
-  { deep: true } // Watch for changes inside the array
+  }
 );
 const setMetaTags = (campaign) => {
   useHead({
