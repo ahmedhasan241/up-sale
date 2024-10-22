@@ -1,7 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     ssr: true, // Ensure SSR is enabled
-    modules: ['@nuxtjs/tailwindcss', '@primevue/nuxt-module', '@nuxt/icon' ,'@ant-design-vue/nuxt' ,'vuetify-nuxt-module' ],
+    modules: [
+      '@nuxtjs/tailwindcss',
+      '@primevue/nuxt-module',
+      '@nuxt/icon',
+      '@ant-design-vue/nuxt',
+      'vuetify-nuxt-module',
+      'vue3-carousel-nuxt'
+    ],
     
     app: {
         head: {
@@ -36,5 +43,10 @@ export default defineNuxtConfig({
     },
     css: [
         '@/assets/css/global.css'
-    ]
+    ],
+    runtimeConfig: {
+        public: {
+            URL: process.env.BASE_URL,
+        }
+    }
 })
