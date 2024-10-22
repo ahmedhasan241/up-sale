@@ -23,10 +23,10 @@ const truncateText = (text, maxLength) => {
 <template>
   <Card
       :class="{
-              'border-black border-[2px] bg-white ': selected === card.id, // Highlight selected card
-              'border-white border-[2px] bg-white': selected !== card.id, // Default card styling
+              'border-black border-[2px] bg-white  scale-110': selected === card.id, // Highlight selected card
+              'border-white border-[2px] bg-white opacity-30': selected !== card.id, // Default card styling
             }"
-      class="cursor-pointer p-2 !w-[180px]   !h-[180px] card-shadow   !rounded-lg  product-card"
+      class="cursor-pointer p-2 !w-[180px]  mt-2  !h-[180px] card-shadow   !rounded-lg  product-card"
   >
     <template #header>
       <div class="w-full h-[96px] mb-2 card-image relative">

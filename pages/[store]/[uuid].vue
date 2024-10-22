@@ -17,95 +17,118 @@
       <template v-else>
         <div class="products-contain">
           <div class="first-section pb-4 flex flex-col gap-3">
-            <div
-              class="min-h-32  image-contain mt-3  flex justify-center align-middle text-center"
-            >
-              <Swiper
-                v-if="selectedCardData && selectedCardData.slider.length > 0"
-                :slides-per-view="1"
-                space-between="0"
-                :loop="true"
-          
-                class="mySwiper custom-swiper w-full h-full  "
-       
-              >
-                <SwiperSlide
-                  v-for="(card, index) in selectedCardData.slider"
-                  :key="index"
-                  class="swiper-slide image-container"
+            <div class="image-contain mt-3 flex justify-center align-middle text-center">
+              <v-container>
+                <!-- Check if selectedCardData and its slider array exist and have slides -->
+                <v-carousel
+                  v-if="selectedCardData && selectedCardData?.slider.length > 0"
+                  v-model="currentSlide"
+                  hide-delimiters
+                  :continuous="true"
+                  :show-arrows="false"
+                  :cycle="true"
+                  :interval="3000"
+                  class="custom-carousel w-full h-full"
                 >
-                  <img :src="card" class="mx-auto image-width " alt="" />
-                </SwiperSlide>
-              </Swiper>
+                  <!-- Loop through the slides -->
+                  <v-carousel-item
+                    v-for="(card, index) in selectedCardData?.slider"
+                    :key="index"
+                    class=""
+                  >
+                    <v-img :src="card" class="mx-auto image-width" alt="" />
+                  </v-carousel-item>
+                </v-carousel>
+
+                <!-- Pagination outside the carousel -->
+                <div class="pagination-container">
+                  <span
+                    v-for="(card, index) in selectedCardData?.slider"
+                    :key="index"
+                    @click="currentSlide = index"
+                    :class="['pagination-dot', { active: currentSlide === index }]"
+                  ></span>
+                </div>
+              </v-container>
               <div
-                v-if="selectedCardData && selectedCardData.slider.length === 0"
-              class="image-container">
-                <img
-              
-                :src="selectedCardData?.cover"
-                class="mx-auto image-width "
-                alt=""
-              />
+                v-if="selectedCardData && selectedCardData?.slider.length === 0"
+                class="image-container"
+              >
+                <img :src="selectedCardData?.cover" class="mx-auto image-width" alt="" />
               </div>
-  
+
               <div class="h-28 flex" v-if="!selectedCardData">
                 <h2 class="my-auto font-bold">إختر منتج أولا</h2>
               </div>
             </div>
-            <div v-if="selectedCardData" class="flex flex-row justify-center">
+            <!-- <div v-if="selectedCardData" class="flex flex-row justify-center">
               <h2 class="font-almarai text-[8px] font-bold leading-[9.6px] text-center">
                 {{ selectedCardData.name_ar }}
               </h2>
-            </div>
+            </div> -->
           </div>
           <Swiper
-            :slides-per-view="2.4"
-            space-between="0"
-            centered-slides="true"
-            :breakpoints="{
-              320: {
-                slidesPerView: 1.5,
-                spaceBetween: 0,
-              },
-              419: {
-                slidesPerView: 2.3,
-                spaceBetween: 5,
-              },
-              768: {
-                slidesPerView: 2,
-                spaceBetween: 0,
-              },
-              1024: {
-                slidesPerView: 2.5,
-                spaceBetween: 0,
-              },
-            }"
-            class="mySwiper h-fit  my-6"
-            loop="true"
+          :slides-per-view="2.3"
+          space-between="10"
+          centered-slides="true"
+          :breakpoints="{
+            320: {
+              slidesPerView: 1.5,
+              spaceBetween: 0,
+            },
+            419: {
+              slidesPerView: 2,
+              spaceBetween: 5,
+            },
+            768: {
+              slidesPerView: 2,
+              spaceBetween: 0,
+            },
+            1024: {
+              slidesPerView: 2.3,
+              spaceBetween: 10,
+            },
+          }"
+          class="mySwiper h-60 pt-2 my-6"
+          loop="true"
+          @slideChange="onSlideChange"
+          @swiper="onSwiperInit"
+        >
+          <SwiperSlide
+            v-for="(card, index) in cards"
+            :key="card.id"
+            class="swiper-slide card-slider my-auto"
+            :data-swiper-slide-index="index"
           >
-            <SwiperSlide v-for="card in cards" :key="card.id" class="swiper-slide card-slider">
-              <ProductCard
-                :card="card"
-                :selected="selectedCardId"
-                @click="selectCard(card)"
-              />
-            </SwiperSlide>
-          </Swiper>
-          <div class="px-[20px]" v-if="selectedCardData">
-            <div>
-              <div class="flex border-b">
+            <ProductCard
+              :card="card"
+              :selected="selectedCardId"
+              @click="selectCard(card)"
+            />
+          </SwiperSlide>
+        </Swiper>
+
+          <div class="px-3 lg:px-5" v-if="selectedCardData">
+            <div class="!w-full">
+              <div
+                class="flex !w-full border-b pb-4 justify-around !px-0 lg:!px-5 border-box"
+              >
                 <button
                   v-for="(tab, index) in tabs"
                   :key="index"
                   @click="selectTab(index)"
                   :class="[
-                    'px-4 py-2 cursor-pointer',
-                    currentTab === index
-                      ? 'border-b-2 border-black text-black font-bold'
-                      : 'border-b-2 border-white font-semibold text-gray-600',
+                    'relative cursor-pointer px-4 py-2',
+                    currentTab === index ? 'active-tab' : 'inactive-tab',
                   ]"
                 >
                   {{ tab.title }}
+                  <span
+                    v-if="index !== 0"
+                    class="counter-tab absolute -top-[2px] -right-[2px] bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full p-1"
+                  >
+                    {{ tab.count }}
+                  </span>
                 </button>
               </div>
               <div class="tab-content mt-3">
@@ -113,9 +136,6 @@
                   <ProductFirstTap :selected="selectedCardData" />
                 </div>
                 <div v-if="currentTab === 1" class="details-content">
-                  <h2 class="font-almarai text-sm font-bold leading-4 text-right">
-                    تعليقات المستتخدمين
-                  </h2>
                   <div
                     class="mt-4 flex justify-center bg-gray-200 rounded-md py-4"
                     v-if="userComments.length === 0"
@@ -124,46 +144,49 @@
                   </div>
                   <div
                     v-else
-                    class="min-h-56 mx-auto w-[95%] p-3 mt-3 rounded-lg bg-gray-200"
+                    class="min-h-56 mx-auto w-[100%] md:w-[95%] mt-3 rounded-lg"
                   >
-                    <div class="flex flex-row justify-between">
+                    <div class="flex flex-row gap-2">
                       <h2
-                        class="text-gray-500 my-auto font-almarai text-xs font-bold leading-3"
+                        class="text-gray-500 bg-gray-50 rounded-[4px] py-2 px-2 my-auto text-[12px] font-almarai text-xs font-bold leading-3"
                       >
                         {{ userComments.length }} تعليق
                       </h2>
                       <button
                         @click="toggleSort"
-                        class="flex flex-row-reverse justify-center gap-1 !bg-black !rounded-md !text-white font-almarai text-[10px] !p-2 font-light"
+                        class="text-gray-500 bg-gray-50 rounded-[4px] py-1 px-2 my-auto text-[12px] font-almarai text-xs font-bold leading-3"
                       >
                         <Icon
                           name="mage:filter"
-                          class="!text-white !text-[16px] my-auto"
+                          class="!text-gray-500 !text-[16px] my-auto"
                         />
-                        {{ sortButtonText }}
+                        <!-- {{ sortButtonText }} -->
                       </button>
                     </div>
 
                     <div class="mt-6 flex flex-col">
                       <div
-                        v-for="(comment, index) in displayedComments"
+                        v-for="(comment, index) in userComments"
                         :key="index"
-                        class="mb-4"
+                        class="mb-6 px-2"
                       >
-                        <div class="flex flex-row justify-between">
-                          <div class="flex flex-row gap-2">
-                            <Avatar
-                              image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png"
-                              class="!w-8 !h-8"
-                              shape="circle"
-                            />
-                            <div class="my-auto flex flex-col gap-1">
+                        <div class="grid grid-cols-5">
+                          <div class="col-span-2 flex flex-row gap-2">
+                            <div
+                              class="!w-8 !h-8 my-auto rounded-full flex items-center justify-center !bg-[#EAEAEA] !text-[#A1A1A1]"
+                            >
+                              <Icon
+                                name="material-symbols:person"
+                                class="text-2xl"
+                              ></Icon>
+                            </div>
+                            <div class="my-auto flex flex-col !justify-start gap-1">
                               <h2
-                                class="font-almarai text-[10px] font-bold leading-[12px]"
+                                class="font-almarai text-[10px] !text-start font-bold leading-[12px]"
                               >
                                 {{ comment.client_name }}
                               </h2>
-                              <div class="flex justify-center">
+                              <div class="flex justify-start">
                                 <Rating
                                   v-model="comment.rating"
                                   readonly
@@ -172,22 +195,22 @@
                               </div>
                             </div>
                           </div>
-                          <div class="my-auto">
+                          <div class="col-span-2 my-auto">
                             <h2 class="flex flex-row-reverse gap-1">
                               <span
-                                class="text-gray-600 font-almarai text-xs font-normal leading-2 tracking-tight text-right"
+                                class="text-gray-600 font-almarai text-[10px] md:text-xs font-normal leading-2 tracking-tight text-right"
                               >
                                 قام بالشراء , تم التقييم
                               </span>
                               <Icon
                                 name="material-symbols:check-circle"
-                                class="!text-[16px] !text-blue-400 !border-0 my-auto"
+                                class="text-[11px] md:!text-[14px] !text-blue-400 !border-0 my-auto"
                               />
                             </h2>
                           </div>
                           <div class="my-auto">
                             <h2
-                              class="text-gray-600 font-almarai text-xs font-normal leading-2 tracking-tight text-left"
+                              class="text-gray-600 font-almarai text-[10px] md:text-xs font-normal leading-2 tracking-tight text-left"
                             >
                               {{ comment.created_at }}
                             </h2>
@@ -202,19 +225,18 @@
                         </div>
                       </div>
 
-                      <div v-if="!showLoadMoreButton" class="flex justify-center my-3">
+                      <!-- <div v-if="!showLoadMoreButton" class="flex justify-center my-3">
                         <button
                           @click="loadMoreComments"
                           class="bg-black p-2 rounded-md text-white font-almarai text-xs font-bold leading-2 tracking-tight text-center"
                         >
                           تحميل المزيد
                         </button>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
-                  <h2 class="font-almarai text-sm font-bold leading-4 text-right mt-5">
-                    مراجعات المستخدمين
-                  </h2>
+                </div>
+                <div v-if="currentTab === 2" class="details-content">
                   <div
                     class="mt-4 flex justify-center bg-gray-200 rounded-md py-4"
                     v-if="usersReviews.length === 0"
@@ -223,91 +245,75 @@
                   </div>
                   <div v-else>
                     <!-- {{ usersReviews }} -->
-                    <Swiper
-                      :slides-per-view="2"
-                      space-between="10"
-                      :breakpoints="{
-                        320: {
-                          slidesPerView: 1.5,
-                          spaceBetween: 5,
-                        },
-                        768: {
-                          slidesPerView: 2,
-                          spaceBetween: 13,
-                        },
-                        1024: {
-                          slidesPerView: 2,
-                          spaceBetween: 10,
-                        },
-                      }"
-                      class="mySwiper"
-                      loop="true"
-                    >
-                      <SwiperSlide
+                    <div class="grid grid-cols-3 gap-[6px] md:gap-4 pb-16">
+                      <div
                         v-for="card in usersReviews"
                         :key="card.id"
-                        class="swiper-slide-reviews"
+                        class="group w-full h-full rounded-lg relative mt-3"
                       >
-                        <div class="group !w-[93%] !h-full rounded-lg relative mt-3">
-                          <div class="relative !h-full !w-full !rounded-lg overflow-hidden group">
-                            <canvas 
-                              ref="canvas" 
-                              class="thumbnail-canvas absolute inset-0 transition-opacity duration-300 group-hover:opacity-0" 
-                              style="display: block;"
-                            ></canvas>
-                            <video
-                              class="video !h-full !w-full !rounded-lg overflow-hidden"
-                              controls
-                              :id="card.id"
-                              v-if="card.video || (card.video && card.image)"
-                              loop
-                              ref="video"
-                              @loadeddata="drawCanvas"
-                            >
-                              <source :src="card.video" type="video/mp4" />
-                              Your browser does not support the video tag.
-                            </video>
-                          </div>
+                        <div
+                          class="relative w-full h-full rounded-lg overflow-hidden group"
+                        >
+                          <canvas
+                            ref="canvas"
+                            class="thumbnail-canvas absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
+                            style="display: block"
+                          ></canvas>
+
+                          <video
+                            class="video w-full h-full object-cover rounded-lg overflow-hidden"
+                            controls
+                            :id="card.id"
+                            v-if="card.video || (card.video && card.image)"
+                            loop
+                            ref="video"
+                            @loadeddata="drawCanvas"
+                          >
+                            <source :src="card.video" type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+
                           <img
-                              v-if="!(card.video || (card.video && card.image))"
+                            v-if="!(card.video || (card.video && card.image))"
                             :src="card.image"
                             :id="card.id"
-                            class="video !h-full !w-full !rounded-lg overflow-hidden"
+                            class="video w-full h-full object-cover rounded-lg overflow-hidden"
                             alt=""
                           />
+                        </div>
+
+                        <div
+                          class="absolute top-0 bottom-0 right-0 left-0 rounded-lg bg-gradient-custom overflow-hidden pointer-events-none group-hover:opacity-0 transition-opacity duration-300"
+                        >
+                          <!-- Set fixed width -->
                           <div
-                            class="absolute top-0 bottom-0 right-0 left-0 !rounded-lg bg-gradient-custom overflow-hidden pointer-events-none group-hover:opacity-0 transition-opacity duration-300 mt-auto !h-[100%] w-[100%]"
+                            class="flex flex-col gap-1 right-1 md:right-3 bottom-3 md:bottom-10 absolute rounded-lg"
                           >
-                            <!-- Set fixed width -->
-                            <div
-                              class="flex flex-col gap-1 right-3 bottom-10 absolute !rounded-lg"
-                            >
-                              <div class="flex justify-start mt-52">
-                                <Rating
-                                  v-model="card.rating"
-                                  readonly
-                                  class="text-[rgba(255,228,0,1)] text-[7px] my-auto"
-                                />
-                              </div>
-                              <h2
-                                class="text-[rgba(161,161,161,1)] font-almarai text-[12px] font-bold leading-[14.4px]"
-                              >
-                                {{ card.client_name }}
-                              </h2>
+                            <div class="flex justify-start mt-52">
+                              <Rating
+                                v-model="card.rating"
+                                readonly
+                                class="text-[rgba(255,228,0,1)] text-[5px] md:text-[7px] my-auto"
+                              />
                             </div>
+                            <h2
+                              class="text-[rgba(161,161,161,1)] font-almarai text-[8px] md:text-[12px] font-bold leading-[14.4px]"
+                            >
+                              {{ card.client_name }}
+                            </h2>
                           </div>
                         </div>
-                      </SwiperSlide>
-                    </Swiper>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="footer-contain fixed bottom-0 inset-x-0 z-10  !px-8 md:!px-5 py-2">
+        <div class="footer-contain fixed bottom-0 inset-x-0 z-10 !px-8 md:!px-5 py-[6px]">
           <button
-            class="btn-Buy bg-black shadow-lg py-2 text-white flex items-center justify-center rounded-lg font-almarai text-[12px] font-bold leading-[14.4px]"
+            class="btn-Buy bg-black shadow-lg my-auto py-[12px] text-white flex items-center justify-center rounded-lg font-almarai text-[12px] font-bold leading-[14.4px]"
             @click="toggleModal"
           >
             شراء
@@ -326,370 +332,217 @@
               @click.stop
             >
               <!-- Modal content -->
-              <div class="flex flex-row px-4 mb-3 justify-between">
-                <div class="flex flex-row gap-3 items-center">
-                  <img
-                    class="w-11 h-11 rounded-full"
-                    src="https://i.postimg.cc/k4Gn6KbL/Ellipse-1.png"
-                    alt="Rounded avatar"
+              <div class="flex header-modal flex-row px-6 mb-3 justify-between">
+                <v-dialog
+                  v-model="isMartDialogVisible"
+                  transition="dialog-top-transition"
+                  max-width="500px"
+                  min-height="450px"
+                  class="dialog-contain"
+                >
+                  <!-- Activator Slot -->
+                  <template v-slot:activator="{ props: activatorProps }">
+                    <div
+                      v-bind="activatorProps"
+                      class="mart-contain"
+                      @click="visiblePopupMart"
+                    >
+                      <v-badge
+                        class="badge-counter"
+                        color="rgba(234, 0, 27, 1)"
+                        :content="martNumber"
+                      >
+                      </v-badge>
+                      <Icon
+                        name="material-symbols:shopping-cart-outline-rounded"
+                        class="!text-black !text-[18px] my-auto"
+                      />
+                    </div>
+                  </template>
+
+                  <!-- Dialog Content -->
+                  <template v-slot:default="{ isActive }">
+                    <PaymentDetails
+                      :selectedCardData="selectedCardData"
+                      :selectedBundles="selectedBundles"
+                      :selectedGifts="selectedGifts"
+                      :discountAmount="discountAmount"
+                      :selectedCityData="selectedCityData"
+                      :totalOrderPrice="totalOrderPrice"
+                      :totalOrderPriceAfterDiscount="totalOrderPriceAfterDiscount"
+                      :hasDiscountInGifts="hasDiscountInGifts"
+                      :showDelivery="showDelivery"
+                      :isDisabled="isDisabled"
+                      :removeBundle="removeBundle"
+                      :removeGift="removeGift"
+                    />
+                  </template>
+                </v-dialog>
+                <div>
+                  <Icon
+                    name="material-symbols:close"
+                    @click="toggleModal"
+                    class="!text-black !text-[16px] my-auto !cursor-pointer"
                   />
-                  <div class="flex flex-col justify-start">
-                    <h2
-                      class="font-almarai text-black text-xs font-normal leading-4 text-right"
-                    >
-                      مرحبا
-                    </h2>
-                    <h2
-                      class="font-almarai text-black text-xs font-normal leading-4 text-right"
-                    >
-                      مستخدمنا العزيز
-                    </h2>
-                  </div>
                 </div>
-                <Icon
-                  name="material-symbols:close"
-                  @click="toggleModal"
-                  class="!text-black !text-[16px] my-auto !cursor-pointer"
-                />
               </div>
-              <div class="content-modal pt-1 px-6  pb-2">
-                <div class="flex flex-row mb-4 justify-between">
-                  <div class="flex flex-col gap-1">
-                    <h2
-                      class="text-black text-[14px] font-bold leading-4 text-right font-almarai"
-                    >
-                      الإجمالى
-                    </h2>
-                    <h2
-                      class="text-red-400 text-xs font-normal leading-3 text-right font-almarai"
-                    >
-                      لديك كوبون تخفيض؟
-                    </h2>
-                  </div>
-                  <div>
-                    <h2
-                      class="text-black text-sm font-bold leading-5 text-right font-almarai"
-                    >
-                      {{ totalOrderPrice }} ر.س
-                    </h2>
-                  </div>
-                </div>
-                <div class="px-2">
-                  <div
-                    class="flex justify-center items-center py-2 gap-2 bg-gray-100"
-                    :class="{ 'rounded-t-lg': isActive, 'rounded-lg': !isActive }"
-                    @click="toggleAccordion"
-                  >
-                    <h3
-                      class="font-almarai text-[12px] font-bold leading-[14.4px] text-right"
-                    >
-                      تفاصيل الفاتورة
-                    </h3>
-                    <Icon
-                      name="material-symbols:keyboard-arrow-down"
-                      :class="{ 'transform rotate-180': isActive }"
-                      class="!text-black !text-[20px] my-auto"
-                    />
-                  </div>
-                  <transition name="fade">
-                    <div class="!px-3 bg-gray-100" :class="{ 'rounded-b-lg': isActive }">
-                      <div v-show="isActive" class="py-4 border-y-[0.6px] border-gray-50">
-                        <div class="flex flex-col gap-3">
-                          <div class="grid grid-cols-2">
-                            <div>
-                              <h2
-                                class="text-black font-almarai text-[12px] font-bold leading-[14.4px]"
-                              >
-                                {{ selectedCardData.name_ar }}
-                              </h2>
-                            </div>
-                            <div class="flex justify-end">
-                              <h2
-                                class="text-black font-almarai text-[12px] font-bold leading-[14.4px]"
-                              >
-                                {{ selectedCardData.price }} ر.س
-                              </h2>
-                            </div>
-                          </div>
-                          <div
-                            class="bundles-selected"
-                            v-for="bundle in selectedBundles"
-                            :key="bundle.id"
-                          >
-                            <div class="grid grid-cols-2 bundle">
-                              <div class="flex justify-start items-center" >
-                                <h2
-                                  class="text-black font-almarai text-[12px] font-bold leading-[14.4px]"
-                                >
-                                  {{ bundle.name_ar }}
-                                </h2>
-                              </div>
-                    
-
-                              <div class="flex justify-end gap-2  items-center">
-                                <div>
-                                  <h2
-                                  class="text-black font-almarai text-[12px] font-bold leading-[14.4px] mr-2"
-                                >
-                                  {{ bundle.price }} ر.س
-                                </h2>
-                                </div>
-              
-                           
-                              <div class="rounded-lg bg-red-100 !h-[26px] mt-2 !w-[26px] flex justify-center items-center">
-              
-                                <button
-                                  @click="removeBundle(bundle.id)"
-                                class="text-red-600  mt-1 h-6 w-6"
-                                aria-label="Remove Bundle"
-                              >
-                                <!-- Replace with your desired icon -->
-                                <Icon name="material-symbols:delete-outline" />
-                              </button>
-                              </div>
-                              </div>
-   
-                            </div>
-                          </div>
-
-                          <div
-                            v-if="selectedGift.name_ar && !isDisabled"
-                            class="grid grid-cols-2 gift items-center"
-                          >
-                            <div class=" flex justify-start items-center">
-                              <h2
-                                class="text-black font-almarai text-[12px] font-bold leading-[14.4px]"
-                              >
-                                {{ selectedGift.name_ar }}
-                              </h2>
-                            </div>
-                  
-                            <div class="flex justify-end gap-2  items-center">
-                              <div class="flex flex-col gap-0 ">
-                                <div>
-                                  <h2
-                                  v-if="     campaignInfo.discount_type !== 'percentage' &&
-                                  selectedGift.id !== 'has_discount' "
-                                  class="text-black font-almarai text-[9px] md:text-[10px] font-bold leading-[14.4px]"
-                                >
-                                  {{ selectedGift.price }}
-                                  <span
-                                    v-if="
-                                      campaignInfo.discount_type !== 'percentage' &&
-                                      selectedGift.id !== 'has_discount'
-                                    "
-                                    >ر.س</span
-                                  >
-                                </h2>
-                                </div>
-                          <div>
-                            <h2
-                            v-if="     campaignInfo.discount_type !== 'percentage' &&
-                            selectedGift.id !== 'has_discount' "
-                            class="line-through text-gray-500 font-almarai text-[9px] md:text-[10px] font-bold leading-[14.4px]"
-                          >
-                            {{ selectedGift.price_before_discount }}
-                            <span
-                              v-if="
-                                campaignInfo.discount_type !== 'percentage' &&
-                                selectedGift.id !== 'has_discount'
-                              "
-                              >ر.س</span
-                            >
-                          </h2>
-                          </div>
-                              </div>
-                   
-                        <div class="rounded-lg bg-red-100 !h-[26px] mt-2 !w-[26px] flex justify-center items-center">
-              
-                          <button
-                          @click="removeGift()"
-                          class="text-red-600  mt-1 h-6 w-6"
-                          aria-label="Remove Bundle"
-                        >
-                          <!-- Replace with your desired icon -->
-                          <Icon name="material-symbols:delete-outline" />
-                        </button>
-                        </div>
-                            </div>
-                   
-                          </div>
-                        </div>
-                      </div>
-                      <div v-show="isActive">
-                        <div
-                          v-if="showDelivery && selectedGift.id !== 'has_free_shipping'"
-                          class="flex flex-row justify-between pt-1 pb-[10px]"
-                        >
-                          <h2
-                            class="text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right"
-                          >
-                            التوصيل
-                          </h2>
-                          <h2
-                            class="text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right"
-                          >
-                            {{ selectedCityData.price }} ر.س
-                          </h2>
-                        </div>
-                      </div>
-                    </div>
-                  </transition>
-                </div>
-
+              <div class="content-modal pt-1 px-4 md:px-6 pb-2">
                 <div class="delivery-info mt-3">
-                  <h2
-                    class="text-black font-almarai text-[14px] font-bold leading-[16.8px] text-right"
-                  >
-                    بيانات التوصيل
-                  </h2>
-                  <div class="mt-2">
-                    <label
-                      for="fullNameInput"
-                      class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
-                    >
-                      الاسم الثلاثى
-                    </label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="fullNameInput"
-                      v-model="form.fullName"
-                      placeholder="الاسم الثلاثى"
-                    />
-                    <div v-if="errors.fullName" class="text-red-500 mt-2">
-                      {{ errors.fullName }}
+                  <div class="info-card">
+                    <div class="flex justify-center">
+                      <h2
+                        class="text-black font-almarai text-[14px] font-bold leading-[16.8px]"
+                      >
+                        بيانات التوصيل
+                      </h2>
                     </div>
-                  </div>
-                  <div class="mt-3">
-                    <label
-                      for="phoneNumberInput"
-                      class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
-                    >
-                      تأكيد رقم الجوال
-                    </label>
-                    <div class="flex mb-3">
-                      <a-input-group class="phone-input" compact>
-                        <a-select v-model:value="value1" style="width: 20%">
-                          <a-select-option value="+966">+966</a-select-option>
-                          <a-select-option value="+20">+20</a-select-option>
-                        </a-select>
-                        <a-input v-model:value="value2" style="width: 65%" />
-                        <a-button       class="bg-black text-white py-[9px] px-[10px] sm:px-[18px] md:px-[24px] !rounded-r-[4px] font-almarai text-[12px] font-bold leading-[14.4px] flex items-center text-center justify-center"
-                        type="button"
-                        id="button-addon1"
-                        @click="verifyPhone"
-                        :disabled="isLoadingPhone || otpConfirmed"
-                        style="width: 15%;">  <template v-if="isLoadingPhone">
-                          <Icon name="eos-icons:loading" class="animate-spin w-4 h-4" />
-                        </template>
-                        <template v-else>
-                          <span class="mx-auto">تأكيد</span>
-                        </template></a-button>
 
-                      </a-input-group>
+                    <div class="mt-5">
+                      <label
+                        for="fullNameInput"
+                        class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
+                      >
+                        الاسم الثلاثى
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="fullNameInput"
+                        v-model="form.fullName"
+                        placeholder="الاسم الثلاثى"
+                      />
+                      <div v-if="errors.fullName" class="text-red-500 mt-2">
+                        {{ errors.fullName }}
+                      </div>
                     </div>
-                    <div v-if="errorPhone" class="text-red-500 mt-2">
-                      {{ errorPhone }}
-                    </div>
-                    <div v-if="errors.phoneNumber" class="text-red-500 mt-2">
-                      {{ errors.phoneNumber }}
-                    </div>
-                    <div v-if="errors.otp" class="text-red-500 mt-2">
-                      {{ errors.otp }}
-                    </div>
-                    <div v-if="otpConfirmed" class="text-green-400 mt-2">
-                      تم تأكيد رقم الجوال
-                    </div>
-                    <div v-if="showOtpPopup">
-                      <div class="overlay" @click="closeOtpPopup"></div>
-                      <div class="otp-popup">
-                        <div class="popup-content">
-                          <h3
-                            class="font-almarai text-[14px] font-bold leading-[16.8px] text-right mb-3"
+                    <div class="mt-3">
+                      <label
+                        for="phoneNumberInput"
+                        class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
+                      >
+                        تأكيد رقم الجوال (واتس أب)
+                      </label>
+                      <div class="flex mb-3">
+                        <a-input-group class="phone-input" compact>
+                          <a-select v-model:value="value1" style="width: 27%">
+                            <a-select-option value="+966">+966</a-select-option>
+                            <a-select-option value="+20">+20</a-select-option>
+                          </a-select>
+                          <a-input
+                            placeholder=""
+                            v-model:value="value2"
+                            style="width: 55%"
+                          />
+                          <a-button
+                            class="bg-black text-white px-[10px] sm:px-[18px] md:px-[24px] !rounded-r-[4px] font-almarai text-[12px] font-bold leading-[14.4px] flex items-center text-center justify-center"
+                            type="button"
+                            id="button-addon1"
+                            @click="verifyPhone"
+                            :disabled="isLoadingPhone || otpConfirmed"
+                            style="width: 18%"
                           >
-                            ادخل رمز التحقق
-                          </h3>
-                          <div ref="otpCont" class="inputs-contain">
-                            <!-- <input
-                              type="text"
-                              class="digit-box"
-                              v-for="(el, ind) in digits"
-                              :key="el + ind"
-                              v-model="digits[ind]"
-                              :autofocus="ind === 0"
-                              maxlength="1"
-                              @input="handleInput($event, ind)"
-                              @keydown="handleBackspace($event, ind)"
-                            /> -->
-                          </div>
-                          <v-otp-input
-                          length="5"
-                          class="otp-inputs"
-                          v-model="otpCodeNumber"
-                        ></v-otp-input>
-                          <div v-if="errorVerify" class="text-lg text-red-500 mt-2">
-                            {{ errorVerify }}
-                          </div>
-                          <div class="flex w-full">
-                            <button
-                              @click="submitOtp"
-                              class="bg-black rounded-lg w-full text-white py-2 px-4 mt-4 font-almarai text-[14px] font-bold leading-[16.8px]"
+                            <template v-if="isLoadingPhone">
+                              <Icon
+                                name="eos-icons:loading"
+                                class="animate-spin w-4 h-4"
+                              />
+                            </template>
+                            <template v-else>
+                              <span class="mx-auto">تأكيد</span>
+                            </template></a-button
+                          >
+                        </a-input-group>
+                      </div>
+                      <div v-if="errorPhone" class="text-red-500 mt-2">
+                        {{ errorPhone }}
+                      </div>
+                      <div v-if="errors.phoneNumber" class="text-red-500 mt-2">
+                        {{ errors.phoneNumber }}
+                      </div>
+                      <div v-if="errors.otp" class="text-red-500 mt-2">
+                        {{ errors.otp }}
+                      </div>
+                      <div v-if="otpConfirmed" class="text-green-400 mt-2">
+                        تم تأكيد رقم الجوال
+                      </div>
+                      <div v-if="showOtpPopup">
+                        <div class="overlay" @click="closeOtpPopup"></div>
+                        <div class="otp-popup">
+                          <div class="popup-content">
+                            <h3
+                              class="font-almarai text-[14px] font-bold leading-[16.8px] text-right mb-2"
                             >
-                              تأكيد
-                            </button>
+                              ادخل رمز التحقق
+                            </h3>
+
+                            <v-otp-input
+                              length="5"
+                              class="otp-inputs"
+                              v-model="otpCodeNumber"
+                            ></v-otp-input>
+                            <div v-if="errorVerify" class="text-lg text-red-500">
+                              {{ errorVerify }}
+                            </div>
+                            <div class="flex w-full">
+                              <button
+                                @click="submitOtp"
+                                class="bg-black rounded-lg w-full text-white py-2 px-4 mt-4 font-almarai text-[14px] font-bold leading-[16.8px]"
+                              >
+                                تأكيد
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="mt-3">
-                    <label
-                      for="citySelect"
-                      class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
-                    >
-                      المدينه
-                    </label>
-                    <a-select
-                    v-model:value="form.selectedCity"
-                    placeholder="المدينه"
-                    show-search
-                    :options="cities"
-                    :filter-option="filterOption"
-                    @focus="handleFocus"
-                    @blur="handleBlur"
-                    @change="handleChange"
-                    style="width: 100%;"
-                  >
-                  </a-select>
-                    <div v-if="errors.selectedCity" class="text-red-500 mt-2">
-                      {{ errors.selectedCity }}
+                    <div class="mt-3">
+                      <label
+                        for="citySelect"
+                        class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
+                      >
+                        المدينه
+                      </label>
+                      <a-select
+                        v-model:value="form.selectedCity"
+                        placeholder="المدينه"
+                        show-search
+                        :options="cities"
+                        :filter-option="filterOption"
+                        @focus="handleFocus"
+                        @blur="handleBlur"
+                        @change="handleChange"
+                        style="width: 100%"
+                      >
+                      </a-select>
+                      <div v-if="errors.selectedCity" class="text-red-500 mt-2">
+                        {{ errors.selectedCity }}
+                      </div>
                     </div>
-                  </div>
-                  <div class="mt-3">
-                    <label
-                      for="placeInput"
-                      class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
-                    >
-                      الحى ووصف المكان
-                    </label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="placeInput"
-                      v-model="form.place"
-                      placeholder="الحى"
-                    />
-                    <div v-if="errors.place" class="text-red-500 mt-2">
-                      {{ errors.place }}
+                    <div class="mt-3">
+                      <label
+                        for="placeInput"
+                        class="form-label text-black font-almarai text-[12px] font-bold leading-[14.4px] text-right !mb-3"
+                      >
+                        الحى ووصف المكان
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="placeInput"
+                        v-model="form.place"
+                        placeholder="الحى"
+                      />
+                      <div v-if="errors.place" class="text-red-500 mt-2">
+                        {{ errors.place }}
+                      </div>
                     </div>
                   </div>
 
-                  <div class="mt-4">
+                  <div class="mt-8">
                     <h2
-                      class="text-black font-almarai text-[14px] font-bold leading-[14.4px]"
+                      class="text-black font-almarai text-center text-[14px] font-bold leading-[14.4px]"
                     >
-                      قم باختيار عرض
+                      اضف اى عرض مميز واحصل على هديتك المجانيه
                     </h2>
                     <div class="mt-3">
                       <div
@@ -728,300 +581,167 @@
                             :key="bundle.id"
                             class="!h-48 pt-2 box-border"
                           >
-                            <Card
-                              class="cursor-pointer p-1 !w-full !h-[90%] mt-1 !rounded-lg transition-all duration-300 shadow-sm hover:shadow-lg"
-                              :class="{
-                                'border-2 border-black card-shadow': selectedBundles.some(
-                                  (item) => item.id === bundle.id
-                                ),
-                                'border-2 border-white card-shadow': !selectedBundles.some(
-                                  (item) => item.id === bundle.id
-                                ),
-                              }"
-                              @click="toggleSelectBundle(bundle)"
-                            >
-                              <template #header>
-                                <div class="w-full h-20 mb-2 card-image relative">
-                                  <img
-                                    class="w-full mx-auto object-contain"
-                                    alt="product image"
-                                    :src="bundle.cover"
-                                  />
-                                </div>
-                              </template>
-                              <template #title>
-                                <div
-                                  class="text-black !h-10 items-center font-almarai text-[12px] font-normal leading-[14.4px] tracking[-0.02em]"
-                                >
-                                  <h2>{{ bundle.name_ar }}</h2>
-                                </div>
-                              </template>
-                              <template #content>
-                                <div class="flex flex-row gap-2 mt-1 !h-4">
-                                  <p
-                                    class="font-almarai text-[14px] font-bold leading-[14.4px]"
-                                  >
-                                    {{ bundle.price }}
-                                    <span
-                                      class="font-almarai text-[10px] font-bold leading-[9.6px]"
-                                      >ر.س</span
-                                    >
-                                  </p>
-                                  <p
-                                    v-if="bundle.price_before_discount"
-                                    class="font-almarai text-[12px] font-medium leading-[14.4px] line-through text-gray-500"
-                                  >
-                                    {{ bundle.price_before_discount }}
-                                    <span
-                                      class="font-almarai text-[8px] font-medium leading-[9.6px]"
-                                      >ر.س</span
-                                    >
-                                  </p>
-                                </div>
-                              </template>
-                            </Card>
+                            <BundleCard
+                              :bundle="bundle"
+                              :selectedBundles="selectedBundles"
+                              :toggleSelectBundle="toggleSelectBundle"
+                            />
                           </SwiperSlide>
                         </Swiper>
                       </div>
-                      <div class="w-full mt-3 bundle-popup !px-2 md:!px-5">
-                        <button
-                          class="bundle-popup-button w-full bg-black py-2 text-white flex items-center justify-center rounded-lg font-almarai text-[14px] font-bold leading-[14.4px]"
-                          @click="togglePopup"
-                        >
-                          اختر عرض من العروض
-                        </button>
-                      </div>
-
-                      <div
-                        v-if="isPopupVisible"
-                        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]"
-                      >
-                        <div
-                          class="bg-white px-5 py-4 md:!px-8 md:!py-6 rounded-3xl w-[90%] md:w-[85%] max-h-[90%] overflow-y-auto"
-                        >
-                          <!-- Swiper for Bundles inside the Popup -->
-                          <div class="flex flex-row justify-start">
-                            <Icon
-                              @click="togglePopup"
-                              name="material-symbols:close-rounded"
-                              class="!text-black text-[16px] md:!text-[14px] cursor-pointer"
-                            />
-                          </div>
-                          <div class="max-h-[400px] overflow-y-auto">
-                            <div
-                              class="flex flex-col gap-6"
-                              v-for="bundle in bundles"
-                              :key="bundle.id"
-                            >
-                              <div
-                                class="form-check form-check-reverse rounded-md flex items-center justify-center !my-3"
-                                :class="{
-                                  'card-shadow': selectedBundles.some(
-                                    (item) => item.id === bundle.id
-                                  ),
-                                  'card-shadow-inactive': !selectedBundles.some(
-                                    (item) => item.id === bundle.id
-                                  ),
-                                }"
-                              >
-                                <!-- Checkbox aligned to the right -->
-                                <input
-                                  class="form-check-input cursor-pointer h-5 w-5 ml-2"
-                                  type="checkbox"
-                                  :id="'bundle_' + bundle.id"
-                                  :checked="
-                                    selectedBundles.some((item) => item.id === bundle.id)
-                                  "
-                                  @change="toggleSelectBundle(bundle)"
-                                />
-                                <label
-                                  class="form-check-label w-full"
-                                  :for="'bundle_' + bundle.id"
-                                >
-                                  <div class="cursor-pointer p-1 !w-[100%] !h-[100%]">
-                                    <div class="flex flex-row gap-2">
-                                      <div
-                                        class="mb-2 h-20 w-20 bg-gray-200 flex justify-center items-center text-center relative overflow-hidden"
-                                      >
-                                        <img
-                                          class="object-contain !h-full !w-full"
-                                          alt="product image"
-                                          :src="bundle.cover"
-                                        />
-                                      </div>
-                                      <div class="flex flex-col justify-center">
-                                        <div
-                                          class="text-black !h-8 items-center font-almarai text-[12px] font-normal leading-[14.4px] tracking-[-0.02em]"
-                                        >
-                                          <h2>{{ bundle.name_ar }}</h2>
-                                        </div>
-                                        <div class="flex flex-row gap-2 !h-4">
-                                          <p
-                                            class="font-almarai text-[12px] font-bold leading-[14.4px]"
-                                          >
-                                            {{ bundle.price }}
-                                            <span
-                                              class="font-almarai text-[10px] font-bold leading-[9.6px]"
-                                              >ر.س</span
-                                            >
-                                          </p>
-                                          <p
-                                            v-if="bundle.price_before_discount"
-                                            class="font-almarai text-[10px] font-medium leading-[14.4px] text-gray-500"
-                                          >
-                                            <span class="line-through">
-                                              {{ bundle.price_before_discount }}
-                                            </span>
-
-                                            <span
-                                              class="font-almarai text-[8px] font-medium leading-[9.6px]"
-                                              >ر.س</span
-                                            >
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </label>
-                                <!-- Input aligned to the right and vertically centered -->
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            class="flex flex-col gap-2 mt-2 px-2 md:!px-5 justify-center"
-                          >
-                            <h2
-                              class="text-black font-almarai text-sm font-bold leading-5 text-center"
-                            >
-                              الاجمالى : {{ totalPrice }} ر.س
-                            </h2>
-                            <button
-                              class="bg-black shadow-md text-white border-none py-2 px-2.5 cursor-pointer rounded-lg"
-                              @click="togglePopup"
-                            >
-                              اضف الى المحفظه
-                            </button>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
-                  <div class="mt-4 !pb-14">
+                  <div class="mt-4">
                     <h2
-                      class="text-black font-almarai text-[14px] font-bold leading-[14.4px] text-right"
+                      class="text-black font-almarai text-center text-[12px] font-bold leading-[14.4px]"
                     >
-                      اضف العرض الى المحفظه واحصل على هدية مجانيه
+                      اختر هديتك المجانيه .. ❤
+                      <br />
+                      ( ملاحظه : لكى تفتح الهدايا يجب عليك اضافة عرض مميز من الأعلى ☝ )
                     </h2>
                     <div class="mt-3">
                       <div>
                         <Swiper
-                        :slides-per-view="2.5"
-                        space-between="20"
-                        :breakpoints="{
-                          320: {
-                            slidesPerView: 2,
-                            spaceBetween: 10,
-                          },
-                          419: {
-                            slidesPerView: 2.2,
-                            spaceBetween: 20,
-                          },
-                          768: {
-                            slidesPerView: 3,
-                            spaceBetween: 15,
-                          },
-                          1024: {
-                            slidesPerView: 2.5,
-                            spaceBetween: 20,
-                          },
-                        }"
-                          class="mySwiper !py-2 !px-0 md:!py-3 md:!px-3"
+                          :slides-per-view="2.5"
+                          space-between="20"
+                          :breakpoints="{
+                            320: {
+                              slidesPerView: 3,
+                              spaceBetween: 8,
+                            },
+                            419: {
+                              slidesPerView: 3,
+                              spaceBetween: 8,
+                            },
+                            768: {
+                              slidesPerView: 3,
+                              spaceBetween: 15,
+                            },
+                            1024: {
+                              slidesPerView: 2.5,
+                              spaceBetween: 20,
+                            },
+                          }"
+                          class="mySwiper !py-2 !px-0 md:!py-3 md:!px-0"
                           loop="true"
                         >
-                          <SwiperSlide v-for="gift in gifts" :key="gift.id" class="!h-44">
+                          <SwiperSlide
+                            v-for="gift in gifts"
+                            :key="gift.id"
+                            class="!h-44 !relative"
+                          >
+                            <div
+                              v-if="isDisabled"
+                              class="absolute top-0 left-0 w-full h-full background-overlay-gift"
+                            >
+                              <div
+                                class="absolute top-3 right-3 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-gray-200 bg-opacity-50 flex items-center justify-center"
+                              >
+                                <Icon
+                                  name="material-symbols:lock-outline-sharp"
+                                  class="!text-white text-[10px] md:!text-[14px]"
+                                />
+                              </div>
+                            </div>
+
                             <Card
                               class="cursor-pointer p-2 h-full !w-full !rounded-lg transition-all duration-300 hover:shadow-lg card-shadow-gift"
                               :class="{
-                                'border-2 border-black ':
-                                  selectedGift.id === gift.id || !isDisabled,
-                                'border-2 border-white ':
-                                  selectedGift.id !== gift.id || isDisabled,
+                                'border-2 border-black':
+                                  selectedGifts.some((item) => item.id === gift.id) ||
+                                  !isDisabled,
+                                'border-2 border-white':
+                                  !selectedGifts.some((item) => item.id === gift.id) ||
+                                  isDisabled,
                               }"
-                              @click="toggleSelectGift(gift)"
+                              @click="toggleSelectGifts(gift)"
                             >
                               <template #header>
-                                <div class="w-full h-24 mb-2 card-image relative">
+                                <div
+                                  class="w-full gift-image-card h-24 mb-2 relative card-image"
+                                >
+                                  <span
+                                    v-if="
+                                      discountPercentage(
+                                        gift.price_before_discount,
+                                        gift.price
+                                      ) > 0
+                                    "
+                                    class="discount-badge absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full"
+                                  >
+                                    خصم
+                                    {{
+                                      discountPercentage(
+                                        gift.price_before_discount,
+                                        gift.price
+                                      )
+                                    }}%
+                                  </span>
                                   <img
                                     class="object-contain h-full mx-auto"
                                     alt="product image"
                                     :src="gift.image"
                                   />
-                                  <div
-                                    v-if="isDisabled"
-                                    class="absolute inset-0 bg-gray-200 bg-opacity-80"
-                                  >
-                                    <div
-                                      class="absolute top-3 right-2 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-black bg-opacity-50 flex items-center justify-center"
-                                    >
-                                      <Icon
-                                        name="material-symbols:lock-outline-sharp"
-                                        class="!text-white text-[10px] md:!text-[14px]"
-                                      />
-                                    </div>
-                                  </div>
                                 </div>
                               </template>
+
                               <template #title>
                                 <div class="flex flex-col gap-2">
-                                  <div
-                                    class="text-black items-center font-almarai text-[14px] font-medium leading-[14.4px] tracking[-0.02em]"
+                                  <h2
+                                    class="text-black font-almarai text-[14px] font-medium leading-[14.4px] tracking[-0.02em] text-center"
                                   >
-                                    <h2>{{ gift.name_ar }}</h2>
-                                  </div>
-                                  <div class="flex flex-row gap-2 mt-1 !h-4">
-                                    <p
-                                      class="font-almarai text-[14px] font-bold leading-[14.4px]"
-                                    >
-                                      <span v-if="gift.price !== '0.00'">{{
-                                        gift.price
-                                      }}</span>
-                                      <span v-if="gift.price === '0.00'">مجانى</span>
-                                      <span
-                                        v-if="gift.price !== '0.00'"
-                                        class="font-almarai text-[10px] font-bold leading-[9.6px]"
-                                        >ر.س</span
-                                      >
+                                    {{ gift.name_ar }}
+                                  </h2>
+                                  <div
+                                    class="flex flex-row justify-center gap-2 mt-1 !h-4"
+                                  >
+                                    <p class="font-almarai text-[12px] font-bold">
+                                      <span>{{ gift.price }}</span>
+                                      <span class="text-[10px] mx-1">ر.س</span>
                                     </p>
                                     <p
-                                      v-if="gift.price_before_discount"
-                                      class="font-almarai text-[12px] font-medium leading-[14.4px] line-through text-gray-500"
+                                      class="font-almarai line-through text-[12px] text-gray-400 font-bold"
                                     >
-                                      {{ gift.price_before_discount }}
-                                      <span
-                                        class="font-almarai text-[8px] font-medium leading-[9.6px]"
-                                        >ر.س</span
-                                      >
+                                      <span>{{ gift.price_before_discount }}</span>
+                                      <span class="text-[10px] mx-1">ر.س</span>
                                     </p>
                                   </div>
                                 </div>
                               </template>
-                              <template #content> </template>
                             </Card>
                           </SwiperSlide>
 
                           <SwiperSlide
                             v-if="campaignInfo.has_free_shipping === 1"
-                            class="!h-44"
+                            class="!h-44 !relative"
                           >
+                            <div
+                              v-if="isDisabled"
+                              class="absolute top-0 left-0 w-full h-full background-overlay-gift"
+                            >
+                              <div
+                                class="absolute top-3 right-3 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-gray-200 bg-opacity-50 flex items-center justify-center"
+                              >
+                                <Icon
+                                  name="material-symbols:lock-outline-sharp"
+                                  class="!text-white text-[10px] md:!text-[14px]"
+                                />
+                              </div>
+                            </div>
+
                             <Card
-                              class="cursor-pointer p-2 h-full !w-full !rounded-lg transition-all duration-300 hover:shadow-lg"
+                              class="cursor-pointer p-2 h-full !w-full !rounded-lg"
                               :class="{
                                 'border-2 border-black':
-                                  selectedGift.id === freeShipping.id || !isDisabled,
-                                'border-2 border-gray-200':
-                                  selectedGift.id !== freeShipping.id || isDisabled,
+                                  selectedGifts.some(
+                                    (item) => item.id === freeShipping.id
+                                  ) || !isDisabled,
+                                'border-2 border-white':
+                                  !selectedGifts.some(
+                                    (item) => item.id === freeShipping.id
+                                  ) || isDisabled,
                               }"
-                              @click="toggleSelectGift(freeShipping)"
+                              @click="toggleSelectGifts(freeShipping)"
                             >
                               <template #header>
                                 <div class="w-full h-24 mb-2 card-image relative">
@@ -1030,43 +750,50 @@
                                     alt="product image"
                                     :src="freeShipping.image"
                                   />
-                                  <div
-                                    v-if="isDisabled"
-                                    class="absolute inset-0 bg-black bg-opacity-50"
-                                  >
-                                    <div
-                                      class="absolute top-1 right-2 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-gray-200 bg-opacity-50 flex items-center justify-center"
-                                    >
-                                      <Icon
-                                        name="material-symbols:lock-outline-sharp"
-                                        class="!text-white text-[10px] md:!text-[14px]"
-                                      />
-                                    </div>
-                                  </div>
                                 </div>
                               </template>
+
                               <template #title>
-                                <div
-                                  class="text-black items-center font-almarai text-[14px] font-medium leading-[14.4px] tracking[-0.02em]"
+                                <h2
+                                  class="text-black font-almarai text-[14px] font-medium leading-[14.4px] tracking[-0.02em] text-center"
                                 >
-                                  <h2>{{ freeShipping.name_ar }}</h2>
-                                </div>
+                                  {{ freeShipping.name_ar }}
+                                </h2>
                               </template>
                             </Card>
                           </SwiperSlide>
+
                           <SwiperSlide
                             v-if="campaignInfo.has_discount === 1"
-                            class="!h-44"
+                            class="!h-44 !relative"
                           >
+                            <div
+                              v-if="isDisabled"
+                              class="absolute top-0 left-0 w-full h-full background-overlay-gift"
+                            >
+                              <div
+                                class="absolute top-3 right-3 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-gray-200 bg-opacity-50 flex items-center justify-center"
+                              >
+                                <Icon
+                                  name="material-symbols:lock-outline-sharp"
+                                  class="!text-white text-[10px] md:!text-[14px]"
+                                />
+                              </div>
+                            </div>
+
                             <Card
-                              class="cursor-pointer p-2 h-full !w-full !rounded-lg transition-all duration-300 hover:shadow-lg"
+                              class="cursor-pointer p-2 h-full !w-full !rounded-lg"
                               :class="{
                                 'border-2 border-black':
-                                  selectedGift.id === discountAmount.id || !isDisabled,
-                                'border-2 border-gray-200':
-                                  selectedGift.id !== discountAmount.id || isDisabled,
+                                  selectedGifts.some(
+                                    (item) => item.id === discountAmount.id
+                                  ) || !isDisabled,
+                                'border-2 border-white':
+                                  !selectedGifts.some(
+                                    (item) => item.id === discountAmount.id
+                                  ) || isDisabled,
                               }"
-                              @click="toggleSelectGift(discountAmount)"
+                              @click="toggleSelectGifts(discountAmount)"
                             >
                               <template #header>
                                 <div class="w-full h-24 mb-2 card-image relative">
@@ -1075,27 +802,15 @@
                                     alt="product image"
                                     :src="discountAmount.image"
                                   />
-                                  <div
-                                    v-if="isDisabled"
-                                    class="absolute inset-0 bg-black bg-opacity-50"
-                                  >
-                                    <div
-                                      class="absolute top-1 right-2 h-4 md:!h-6 w-4 md:!w-6 rounded-full bg-gray-200 bg-opacity-50 flex items-center justify-center"
-                                    >
-                                      <Icon
-                                        name="material-symbols:lock-outline-sharp"
-                                        class="!text-white text-[10px] md:!text-[14px]"
-                                      />
-                                    </div>
-                                  </div>
                                 </div>
                               </template>
+
                               <template #title>
-                                <div
-                                  class="text-black items-center font-almarai text-[14px] font-medium leading-[14.4px] tracking[-0.02em]"
+                                <h2
+                                  class="text-black font-almarai text-[14px] font-medium leading-[14.4px] tracking[-0.02em] text-center"
                                 >
-                                  <h2>{{ discountAmount.name }}</h2>
-                                </div>
+                                  {{ discountAmount.name }}
+                                </h2>
                               </template>
                             </Card>
                           </SwiperSlide>
@@ -1103,22 +818,36 @@
                       </div>
                     </div>
                   </div>
-                  <div class="fixed bottom-0 inset-x-0 z-20 bg-white py-2 mt-4 !px-2 md:!px-5">
+                  <PaymentDetails
+                    :selectedCardData="selectedCardData"
+                    :selectedBundles="selectedBundles"
+                    :selectedGifts="selectedGifts"
+                    :discountAmount="discountAmount"
+                    :selectedCityData="selectedCityData"
+                    :totalOrderPrice="totalOrderPrice"
+                    :totalOrderPriceAfterDiscount="totalOrderPriceAfterDiscount"
+                    :hasDiscountInGifts="hasDiscountInGifts"
+                    :showDelivery="showDelivery"
+                    :isDisabled="isDisabled"
+                    :removeBundle="removeBundle"
+                    :removeGift="removeGift"
+                  />
+                  <div
+                    class="fixed bottom-0 inset-x-0 z-10 bg-white py-2 mt-4 !px-7 md:!px-11"
+                  >
                     <div class="flex flex-col gap-2 justify-center w-full">
                       <div>
                         <button
-                        class="w-full bg-black py-2 text-white flex items-center justify-center rounded-lg font-almarai text-[12px] font-bold leading-[14.4px]"
-                        @click="submitForm"
-                      >
-                        اتمام الدفع
-                      </button>
+                          class="w-full bg-black py-2 text-white flex items-center justify-center rounded-lg font-almarai text-[12px] font-bold leading-[14.4px]"
+                          @click="submitForm"
+                        >
+                          اتمام الدفع
+                        </button>
                       </div>
                       <div>
-                        <img src="https://i.postimg.cc/sDGwfNmD/payment.png" alt="">
+                        <img src="https://i.postimg.cc/sDGwfNmD/payment.png" alt="" />
                       </div>
-
                     </div>
-            
                   </div>
                 </div>
               </div>
@@ -1132,7 +861,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 
 // import { useHead } from '@vueuse/head';
 // import payment from "assets/images/payment.svg"
@@ -1146,10 +875,9 @@ const modules = [Navigation];
 const route = useRoute();
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/swiper-bundle.css";
-const tabs = ref([
-  { title: "التفاصيل", value: "0" },
-  { title: "التقييمات", value: "1" },
-]);
+const mySwiperRef = ref(null);
+const swiperInstance = ref(null);
+const currentSlide = ref(0);
 const cards = ref([]);
 const bundles = ref([]);
 const gifts = ref([]);
@@ -1158,12 +886,17 @@ const selectedCardData = ref(null);
 const error = ref(null);
 const isLoading = ref(true);
 const userComments = ref([]);
-const displayedComments = ref([]);
+// const displayedComments = ref([]);
 const usersReviews = ref([]);
-const showLoadMoreButton = ref(true);
+// const showLoadMoreButton = ref(true);
+const tabs = ref([
+  { title: "التفاصيل", value: "0" },
+  { title: "التقييمات", value: "1" },
+  { title: "المراجعات", value: "2" },
+]);
 const campaignInfo = ref({});
 const currentTab = ref(0);
-const isActive = ref(false);
+// const isActive = ref(false);
 const selectedGift = ref({
   price: "0.00",
 });
@@ -1177,7 +910,7 @@ const errorPhone = ref(null);
 const isLoadingPhone = ref(false);
 const errorVerify = ref(null);
 const isLoadingVerify = ref(false);
-const value1 = ref('+966');
+const value1 = ref("+966");
 const value2 = ref();
 const freeShipping = ref({
   id: "has_free_shipping",
@@ -1189,8 +922,8 @@ const freeShipping = ref({
   price_before_discount: null,
   image: "https://i.postimg.cc/rwsv0w7m/image.png",
 });
-console.log(route.query);
-
+const config = useRuntimeConfig();
+console.log(config.public.URL);
 const canvas = ref(null);
 const video = ref(null);
 
@@ -1200,15 +933,19 @@ const drawCanvas = () => {
   const videoEl = video.value; // Assign the video element to a variable
 
   if (canvasEl && videoEl) {
-    const context = canvasEl.getContext('2d'); // Get the context of the canvas
+    const context = canvasEl.getContext("2d"); // Get the context of the canvas
 
     canvasEl.width = videoEl.videoWidth; // Set the canvas width to the video width
     canvasEl.height = videoEl.videoHeight; // Set the canvas height to the video height
 
     videoEl.currentTime = 0; // Set the current time to the beginning
-    videoEl.addEventListener('loadeddata', () => {
-      context.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height); // Draw the image onto the canvas
-    }, { once: true });
+    videoEl.addEventListener(
+      "loadeddata",
+      () => {
+        context.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height); // Draw the image onto the canvas
+      },
+      { once: true }
+    );
   }
 };
 
@@ -1227,8 +964,7 @@ const form = reactive({
   place: "",
 });
 watch(value2, (newValue) => {
-  // Update form.phoneNumber by removing the '+' from value1 and appending value2
-  form.phoneNumber = value1.value.replace('+', '') + newValue;
+  form.phoneNumber = value1.value.replace("+", "") + newValue;
 });
 // Error state
 const errors = reactive({
@@ -1244,25 +980,46 @@ const selectedCityObject = ref(null);
 const isDisabled = computed(() => selectedBundles.value.length === 0);
 
 // Watch for changes in isDisabled
+
+// Method to toggle gift selection
+
+const selectedGifts = ref([]); // Reactive array for selected gifts
+const selectedGiftIds = ref([]); // Reactive array for selected gift IDs
+
 watch(isDisabled, (newValue) => {
   // If no bundles are selected (isDisabled becomes false)
   if (newValue === false) {
     // Reset selectedGift to an empty object
-    selectedGift.value = {};
+    selectedGifts.value = [];
   }
 });
-// Method to toggle gift selection
-function toggleSelectGift(gift) {
-  // Prevent selection if selectedBundles is empty
+
+function discountPercentage(priceBeforeDiscount, currentPrice) {
+  if (priceBeforeDiscount && currentPrice && priceBeforeDiscount > currentPrice) {
+    const discount = ((priceBeforeDiscount - currentPrice) / priceBeforeDiscount) * 100;
+    return Math.round(discount); // Return the rounded percentage
+  }
+  return 0; // No discount if conditions are not met
+}
+function toggleSelectGifts(gift) {
+  // Prevent selection if isDisabled is true
   if (!isDisabled.value) {
-    // If the selectedGift is already the one clicked, deselect it
-    if (selectedGift.value && selectedGift.value.id === gift.id) {
-      selectedGift.value = {};
+    const index = selectedGifts.value.findIndex(
+      (selectedGift) => selectedGift.id === gift.id
+    );
+
+    if (index !== -1) {
+      // Gift is already selected, so deselect it
+      selectedGifts.value.splice(index, 1); // Remove the gift from the array
+      selectedGiftIds.value.splice(selectedGiftIds.value.indexOf(gift.id), 1); // Remove the ID from the IDs array
     } else {
-      // Select the new gift
-      selectedGift.value = gift;
+      // Gift is not selected, so select it
+      selectedGifts.value.push(gift); // Add the gift to the array
+      selectedGiftIds.value.push(gift.id); // Add the ID to the IDs array
     }
   }
+
+  console.log("Selected Gift IDs:", selectedGiftIds.value);
 }
 
 // Watch for changes in `showModal` and update the animation class
@@ -1290,7 +1047,7 @@ function toggleModal() {
   showModal.value = !showModal.value;
 }
 const digits = reactive(Array(5).fill(null)); // Initialize with 5 null values
-const otpCodeNumber = ref()
+const otpCodeNumber = ref();
 const otpCont = ref(null);
 
 // Handle input event to restrict to numbers and focus the next input if filled
@@ -1333,7 +1090,11 @@ const handleBackspace = (event, index) => {
     }
   } else {
     // Allow only digits (0-9) and control keys (Backspace, Delete)
-    if (!/^[0-9]$/.test(event.key) && event.key !== 'Backspace' && event.key !== 'Delete') {
+    if (
+      !/^[0-9]$/.test(event.key) &&
+      event.key !== "Backspace" &&
+      event.key !== "Delete"
+    ) {
       event.preventDefault(); // Prevent non-digit input
     }
   }
@@ -1361,23 +1122,51 @@ const totalOrderPrice = computed(() => {
     return sum + (parseFloat(item.price) || 0);
   }, 0);
 
-  // Calculate gift price only if id is not 'has_free_shipping' or 'has_discount'
-  const giftPrice =
-    selectedGift.value &&
-    selectedGift.value.id !== "has_free_shipping" &&
-    selectedGift.value.id !== "has_discount"
-      ? parseFloat(selectedGift.value.price) || 0
-      : 0;
+  // Calculate total gift price by filtering out gifts with 'has_free_shipping' or 'has_discount'
+  const giftPrice = selectedGifts.value.reduce((sum, gift) => {
+    if (gift.id !== "has_free_shipping" && gift.id !== "has_discount") {
+      return sum + (parseFloat(gift.price) || 0);
+    }
+    return sum;
+  }, 0);
 
-  // Add city price only if id is not 'has_free_shipping'
-  const cityPrice =
-    selectedGift.value && selectedGift.value.id !== "has_free_shipping"
-      ? parseFloat(selectedCityData.value?.price) || 0
-      : 0;
+  // Add city price only if 'has_free_shipping' is not present in selectedGifts
+  const hasFreeShipping = selectedGifts.value.some(
+    (gift) => gift.id === "has_free_shipping"
+  );
+  const cityPrice = !hasFreeShipping ? parseFloat(selectedCityData.value?.price) || 0 : 0;
 
   // Calculate total
   const total = cardPrice + bundlesPrice + giftPrice + cityPrice;
   return total;
+});
+const hasDiscountInGifts = computed(() => {
+  return selectedGiftIds.value.includes("has_discount");
+});
+
+const totalOrderPriceAfterDiscount = computed(() => {
+  let total = totalOrderPrice.value; // Start with the total price before discount
+
+  // Check if 'has_discount' is present in selectedGiftIds
+  const hasDiscountInGifts = selectedGiftIds.value.includes("has_discount");
+
+  // Apply discount only if campaignInfo.has_discount is 1 and 'has_discount' exists in selectedGiftIds
+  if (campaignInfo.value.has_discount === 1 && hasDiscountInGifts) {
+    const discountValue = parseFloat(campaignInfo.value.discount_value) || 0;
+
+    // Apply the discount based on discount type
+    if (campaignInfo.value.discount_type === "fixed") {
+      // Subtract the fixed discount
+      total = total - discountValue;
+    } else if (campaignInfo.value.discount_type === "percentage") {
+      // Apply percentage discount
+      const discountAmount = total * (discountValue / 100);
+      total = total - discountAmount;
+    }
+  }
+
+  // Ensure the total is not negative
+  return total > 0 ? total : 0;
 });
 
 // Function to toggle the popup visibility
@@ -1387,9 +1176,9 @@ const togglePopup = () => {
 
 //  accordion
 
-const toggleAccordion = () => {
-  isActive.value = !isActive.value;
-};
+// const toggleAccordion = () => {
+//   isActive.value = !isActive.value;
+// };
 
 function selectTab(index) {
   currentTab.value = index;
@@ -1397,15 +1186,13 @@ function selectTab(index) {
 
 const verifyPhone = async () => {
   isLoadingPhone.value = true;
-  errorPhone.value = null; // Reset error message
-  console.log("form.selectedCity", form.selectedCity);
-
+  errorPhone.value = null;
   try {
     const body = {
-      whatsapp_number: form.phoneNumber,
+      whatsapp_number: value1.value.replace("+", "") + value2.value,
     };
 
-    const { data } = await useFetch("https://up.ft.sa/api/v1/campaign/verify/whatsapp", {
+    const { data } = await useFetch(`${config.public.URL}/verify/whatsapp`, {
       method: "POST",
       body: body,
     });
@@ -1413,8 +1200,6 @@ const verifyPhone = async () => {
     console.log("Verify", data);
     if (data.value?.status === true) {
       showOtpPopup.value = true;
-    } else {
-      errorPhone.value = data.value?.message ?? "الحقل رقم الواتساب مطلوب";
     }
   } catch (err) {
     errorPhone.value = err.message; // Set error message
@@ -1431,11 +1216,11 @@ const submitOtp = async () => {
 
   try {
     const body = {
-      whatsapp_number: form.phoneNumber,
+      whatsapp_number: value1.value.replace("+", "") + value2.value,
       otp: otpCodeNumber.value,
     };
 
-    const { data } = await useFetch("https://up.ft.sa/api/v1/campaign/verify/otp", {
+    const { data } = await useFetch(`${config.public.URL}/verify/otp`, {
       method: "POST",
       body: body,
       headers: {
@@ -1449,7 +1234,7 @@ const submitOtp = async () => {
     if (data.value.status === true) {
       showOtpPopup.value = false;
       otpConfirmed.value = true;
-      otpCodeNumber.value = ''
+      otpCodeNumber.value = "";
       errors.otp = null;
     } else {
       errorVerify.value = data.value.message;
@@ -1461,14 +1246,11 @@ const submitOtp = async () => {
   }
   // Close the popup after submission
 };
-watch(
-  otpCodeNumber,
-  (newCode) => {
-    if (newCode.length === 5 && /^\d+$/.test(newCode)) {
-      submitOtp(); 
-    }
+watch(otpCodeNumber, (newCode) => {
+  if (newCode.length === 5 && /^\d+$/.test(newCode)) {
+    submitOtp();
   }
-);
+});
 const setMetaTags = (campaign) => {
   useHead({
     title: campaign.meta_title || "Up Sale",
@@ -1485,7 +1267,7 @@ const setMetaTags = (campaign) => {
 const fetchCampaign = async () => {
   try {
     const response = await fetch(
-      `https://up.ft.sa/api/v1/campaign/${route.params.store}/${route.params.uuid}`,
+      `${config.public.URL}/${route.params.store}/${route.params.uuid}`,
       {
         headers: {
           ACCEPT_LANGUAGE: "ar",
@@ -1527,14 +1309,11 @@ const discountAmount = computed(() => ({
 }));
 const fetchProducts = async () => {
   try {
-    const response = await fetch(
-      `https://up.ft.sa/api/v1/campaign/products/${route.params.uuid}`,
-      {
-        headers: {
-          ACCEPT_LANGUAGE: "ar",
-        },
-      }
-    );
+    const response = await fetch(`${config.public.URL}/products/${route.params.uuid}`, {
+      headers: {
+        ACCEPT_LANGUAGE: "ar",
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -1543,9 +1322,27 @@ const fetchProducts = async () => {
     const data = await response.json();
     if (data) {
       cards.value = data.data;
-      selectedCardData.value = data?.data[0]
-      selectedCardId.value = data?.data[0]?.id
-      
+      selectedCardData.value = data?.data[0];
+      selectedCardId.value = data?.data[0]?.id;
+      userComments.value = selectedCardData.value.ratings
+        .map((rating) => (!rating.video && !rating.image ? rating : null))
+        .filter(Boolean); // Filter out null values
+
+      usersReviews.value = selectedCardData.value.ratings
+        .map((rating) => (rating.video || rating.image ? rating : null))
+        .filter(Boolean); // Filter out null values
+
+      tabs.value = [
+        { title: "التفاصيل", value: "0", count: 0 },
+        { title: "التقييمات", value: "1", count: userComments.value.length },
+        { title: "المراجعات", value: "2", count: usersReviews.value.length },
+      ];
+
+      // showLoadMoreButton.value =
+      //   userComments.value.length > 2 && displayedComments.value.length === 2;
+      // if (userComments.value.length > 0) {
+      //   displayedComments.value = userComments.value.slice(0, 2);
+      // }
     }
   } catch (err) {
     error.value = "Error fetching products: " + err.message;
@@ -1556,9 +1353,9 @@ const fetchProducts = async () => {
 };
 const fetchCities = async () => {
   try {
-           const response = await fetch(`https://up.ft.sa/api/v1/campaign/get-cities/${route.params.uuid}`, {
+    const response = await fetch(`${config.public.URL}/get-cities/${route.params.uuid}`, {
       headers: {
-        'ACCEPT_LANGUAGE': 'ar',
+        ACCEPT_LANGUAGE: "ar",
       },
     });
 
@@ -1583,7 +1380,7 @@ const fetchCities = async () => {
     isLoading.value = false;
   }
 };
-const showDelivery = ref(false)
+const showDelivery = ref(false);
 
 const selectedCityData = computed(() => {
   return cities.value.find((city) => city.value === form.selectedCity) || {};
@@ -1591,14 +1388,11 @@ const selectedCityData = computed(() => {
 
 const fetchBundles = async () => {
   try {
-    const response = await fetch(
-      `https://up.ft.sa/api/v1/campaign/bundles/${route.params.uuid}`,
-      {
-        headers: {
-          ACCEPT_LANGUAGE: "ar",
-        },
-      }
-    );
+    const response = await fetch(`${config.public.URL}/bundles/${route.params.uuid}`, {
+      headers: {
+        ACCEPT_LANGUAGE: "ar",
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -1618,14 +1412,11 @@ const fetchBundles = async () => {
 };
 const fetchGifts = async () => {
   try {
-    const response = await fetch(
-      `https://up.ft.sa/api/v1/campaign/gifts/${route.params.uuid}`,
-      {
-        headers: {
-          ACCEPT_LANGUAGE: "ar",
-        },
-      }
-    );
+    const response = await fetch(`${config.public.URL}/gifts/${route.params.uuid}`, {
+      headers: {
+        ACCEPT_LANGUAGE: "ar",
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -1740,12 +1531,12 @@ const submitForm = async () => {
       details: form.place,
       city_id: form.selectedCity,
       product_id: selectedCardData.value.id,
-      gift: selectedGift?.value.id || null,
+      gift: selectedGiftIds?.value || null,
       bundle_ids: selectedBundles.value.map((bundle) => bundle.id),
     };
 
     const { data, error } = await useFetch(
-      `https://up.ft.sa/api/v1/campaign/create-order/${route.params.uuid}`,
+      `${config.public.URL}/create-order/${route.params.uuid}`,
       {
         method: "POST",
         body: body,
@@ -1780,36 +1571,73 @@ const resetErrors = () => {
 };
 
 const selectCard = (card) => {
-  if (selectedCardId.value === card.id) {
-    // selectedCardId.value = null;
-    // selectedCardData.value = null;
-    // currentTab.value = 0;
-    // userComments.value = [];
-    // usersReviews.value = [];
-  } else {
-    selectedCardId.value = card.id;
-    selectedCardData.value = card;
-    currentTab.value = 0;
+      if (selectedCardId.value === card.id) return;
 
-    userComments.value = card.ratings
-      .map((rating) => (!rating.video && !rating.image ? rating : null))
-      .filter(Boolean); // Filter out null values
+      selectedCardId.value = card.id;
+      selectedCardData.value = card;
+      currentTab.value = 0;
 
-    usersReviews.value = card.ratings
-      .map((rating) => (rating.video || rating.image ? rating : null))
-      .filter(Boolean); // Filter out null values
+      userComments.value = card.ratings
+        .map((rating) => (!rating.video && !rating.image ? rating : null))
+        .filter(Boolean);
 
-    showLoadMoreButton.value =
-      userComments.value.length > 2 && displayedComments.value.length === 2;
-    if (userComments.value.length > 0) {
-      displayedComments.value = userComments.value.slice(0, 2);
-    }
-  }
-};
-const loadMoreComments = () => {
-  displayedComments.value = userComments.value;
-  showLoadMoreButton.value = true;
-};
+      usersReviews.value = card.ratings
+        .map((rating) => (rating.video || rating.image ? rating : null))
+        .filter(Boolean);
+
+      tabs.value = [
+        { title: 'التفاصيل', value: '0', count: 0 },
+        { title: 'التقييمات', value: '1', count: userComments.value.length },
+        { title: 'المراجعات', value: '2', count: usersReviews.value.length },
+      ];
+    };
+
+    // Capture the swiper instance when it's ready
+    const onSwiperInit = (swiper) => {
+      swiperInstance.value = swiper;
+      console.log('====================================');
+      console.log("swiperInstance" , swiperInstance.value);
+      console.log('====================================');
+    };
+
+    // Function to handle active slide change
+    const onSlideChange = () => {
+      // Check if swiper instance is available
+      if (!swiperInstance.value || !swiperInstance.value.slides) {
+        console.warn('Swiper instance or slides not available.');
+        return;
+      }
+
+      // Get the active slide index directly
+      const activeSlideIndex = swiperInstance.value.activeIndex;
+
+      // Find the card by active slide index in the cards array
+      const activeCard = cards.value[activeSlideIndex]; // Directly use the index to get the card
+      if (activeCard) {
+        selectCard(activeCard); // Select the active card based on the index
+      }
+    };
+
+    // Watch for changes to swiper's active slide
+    watch(
+      () => swiperInstance.value?.activeIndex,
+      (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          onSlideChange(); // Call onSlideChange when the active index changes
+        }
+      }
+    );
+
+    onMounted(() => {
+      if (swiperInstance.value) {
+        onSlideChange(); // Run when the swiper is ready
+      }
+    });
+
+    // const loadMoreComments = () => {
+//   displayedComments.value = userComments.value;
+//   showLoadMoreButton.value = true;
+// };
 const sortNewestFirst = ref(true); // State to track sorting order
 const sortButtonText = ref("الأحدث"); // Initialize with "newest" text
 
@@ -1827,24 +1655,24 @@ const toggleSort = () => {
   // Update button text based on the sorting order
   sortButtonText.value = sortNewestFirst.value ? "الأحدث" : "الأقدم";
 
-  // After sorting, display the first 2 comments
-  displayedComments.value = userComments.value.slice(0, 2);
-  showLoadMoreButton.value = false;
+  // // After sorting, display the first 2 comments
+  // displayedComments.value = userComments.value.slice(0, 2);
+  // showLoadMoreButton.value = false;
 };
 
-watch(() => form.phoneNumber, (newValue, oldValue) => {
-  otpConfirmed.value = false;
-});
+watch(
+  () => form.phoneNumber,
+  (newValue, oldValue) => {
+    otpConfirmed.value = false;
+  }
+);
 
 watch(selectedBundles, (newValue) => {
   if (newValue.length === 0) {
-    selectedGift.value = { price: "0.00" };
+    selectedGifts.value = [];
+    selectedGiftIds.value = [];
   }
 });
-
-
-
-
 
 const handleChange = (value) => {
   console.log(`selected ${value}`);
@@ -1854,11 +1682,11 @@ const handleChange = (value) => {
 };
 
 const handleBlur = () => {
-  console.log('blur');
+  console.log("blur");
 };
 
 const handleFocus = () => {
-  console.log('focus');
+  console.log("focus");
 };
 
 const filterOption = (input, option) => {
@@ -1870,9 +1698,126 @@ const removeBundle = (bundleId) => {
     (bundle) => bundle.id !== bundleId
   );
 };
-const removeGift = () => {
-  isDisabled.value = true;
-  selectedGift.value = {}
-  
+// const removeGift = () => {
+//   isDisabled.value = true;
+//   selectedGift.value = {}
+
+// };
+const removeGift = (giftId) => {
+  const index = selectedGifts.value.findIndex((gift) => gift.id === giftId);
+  if (index !== -1) {
+    selectedGifts.value.splice(index, 1);
+    if (selectedGifts.length === 0) {
+      isDisabled.value = true;
+    }
+  }
+};
+const martNumber = computed(() => {
+  let length = 0;
+
+  // Check if selectedGift exists and has an id
+  if (selectedGifts.value && selectedGifts.value.length) {
+    length += selectedGifts.value.length;
+  }
+
+  // Check if selectedBundles is an array and get its length
+  if (Array.isArray(selectedBundles.value)) {
+    length += selectedBundles.value.length;
+  }
+
+  // Check if selectedCardData exists and is an object
+  if (selectedCardData.value && typeof selectedCardData.value === "object") {
+    length += 1;
+  }
+
+  return length;
+});
+const isMartDialogVisible = ref(false);
+const visiblePopupMart = () => {
+  isMartDialogVisible.value = true;
 };
 </script>
+<style scoped>
+/* Carousel container customization */
+.first-section .custom-carousel {
+  height: 166px !important;
+  padding: 0px;
+  background: rgba(241, 241, 241, 1);
+  border-radius: 6px !important;
+}
+
+/* Pagination dots outside the carousel */
+.first-section .pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+@media (max-width: 500px) {
+  .v-container {
+    width: 100%;
+    padding: 0px !important;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+.first-section .pagination-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 6px;
+  border-radius: 50%;
+  background: rgba(217, 217, 217, 1);
+
+  cursor: pointer;
+}
+
+.first-section .pagination-dot.active {
+  background: rgba(0, 0, 0, 1);
+}
+
+.background-overlay-gift {
+  position: absolute; /* Make it absolutely positioned */
+  top: 0; /* Align to the top */
+  left: 0; /* Align to the left */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Semi-transparent background, adjust as necessary */
+  z-index: 20;
+  border-radius: 8px !important ;
+}
+.mart-contain {
+  cursor: pointer;
+}
+.dialog-contain {
+  border-radius: 8px !important;
+  direction: rtl !important;
+}
+
+.gift-image-card .discount-badge {
+  position: absolute;
+  width: 55px;
+  height: 20px;
+  top: 3px;
+  right: 0px;
+  background-color: #000;
+  color: white;
+  border: 1px solid #fff;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  z-index: 10;
+  font-family: "Almarai";
+  font-size: 8px;
+  font-weight: 400;
+}
+.swiper-backface-hidden .swiper-slide {
+  display: flex !important;
+  justify-content: center !important;
+}
+</style>

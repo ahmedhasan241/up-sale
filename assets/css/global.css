@@ -1,4 +1,49 @@
 
+.payment-details {
+    box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.06);
+
+    background: rgba(253, 253, 253, 1);
+
+    padding: 8px;
+
+    margin-top: 30px !important;
+}
+.info-card {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.06);
+padding: 8px;
+border-radius: 12px !important;
+}
+.header-modal {
+    border-bottom: 1px solid rgba(234, 234, 234, 1);
+    padding: 16px;
+}
+.mart-contain {
+    position: relative;
+}
+.mart-contain .badge-counter {
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    background-color: red !important;
+    color: white;
+    font-family: "Almarai";
+font-size: 12px;
+font-weight: 700;
+line-height: 14.4px;
+
+
+}
+
+.payment-details .details-title {
+    font-family: "Almarai";
+font-size: 14px;
+font-weight: 700;
+line-height: 16.8px;
+text-align: center;
+color: black;
+
+}
 .card-shadow {
 
 
@@ -17,6 +62,32 @@
 
     box-shadow: 0px 0px 6px 0px white;
 
+}
+.active-tab {
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.04);
+    background: rgba(248, 248, 248, 1);
+    padding: 8px  ;
+    border-radius: 30px ;
+    font-family: "Almarai";
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16.8px;
+    color: black;
+
+}
+.inactive-tab {
+    box-shadow: none;
+    background: white;
+    padding: 8px  ;
+    border-radius: 30px ;
+    font-family: "Almarai";
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.8px;
+    color: rgba(140, 140, 140, 1);
+
+
+    
 }
 
 .otp-popup {
@@ -127,7 +198,7 @@
 .modal {
     width: 500px !important;
     margin: 0 auto !important;
-
+    z-index: 1000000000;
     opacity: 1;
 }
 /* Add a smoother animation for the modal */
@@ -167,13 +238,13 @@
 
 .modal-contain::-webkit-scrollbar-thumb,
 .content-modal::-webkit-scrollbar-thumb {
-    background: #4caf50; /* Thumb color */
+    background: black; /* Thumb color */
     border-radius: 10px; /* Rounded scrollbar */
 }
 
 .modal-contain::-webkit-scrollbar-thumb:hover,
 .content-modal::-webkit-scrollbar-thumb:hover {
-    background: #388e3c; /* Darker thumb color on hover */
+    background: black; /* Darker thumb color on hover */
 }
 
 .bg-gradient-custom {
@@ -238,28 +309,30 @@
 }
 .header-contain {
     width: 100%;
-    height: 10vh;
+    height: 6vh;
     padding: 0 0 10px 0;
     box-sizing: border-box;
 }
 .header-contain img {
-    height: 100%;
+    width: 34px;
+    height: 36px;
 }
 
 /* Start Products Contain Styles */
 .first-section {
-    border: 2px solid transparent;
+    /* border: 2px solid transparent;
     border-image-source: linear-gradient(
             90deg,
             rgba(241, 241, 241, 0.1) 0%,
             #dddddd 50.26%,
             rgba(241, 241, 241, 0.1) 100%
-    );
-    border-image-slice: 1;
+    ); */
+    /* border-image-slice: 1; */
     padding: 0px 20px;
 }
 .image-contain {
-    
+    width: 100%;
+    height: 170px;
     border-radius: 8px;
     display: flex;
     justify-content: center;
@@ -281,26 +354,27 @@
 
 .card-image .discount-badge {
     position: absolute;
-    width: 64px;
-    height: 12px;
-    top: 28.23px;
-    left: -10.99px;
+    width: 50px;
+    height: 20px;
+    top: 3px;
+    right: 0px;
     background-color: #000;
     color: white;
     border: 1px solid #fff;
     text-align: center;
-
-    transform: rotate(-40deg);
-    transform-origin: top left;
-    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
     z-index: 10;
     font-family: "Almarai";
     font-size: 8px;
     font-weight: 400;
 }
+
 .products-contain {
     width: 100%;
-    height: 80vh;
+    height: 84vh;
     overflow-y: auto;
     position: relative;
     box-sizing: border-box;
@@ -318,12 +392,12 @@
 }
 
 .products-contain::-webkit-scrollbar-thumb {
-    background: #4caf50; /* Thumb color */
+    background: black; /* Thumb color */
     border-radius: 10px; /* Rounded scrollbar */
 }
 
 .products-contain::-webkit-scrollbar-thumb:hover {
-    background: #388e3c; /* Darker thumb color on hover */
+    background: black; /* Darker thumb color on hover */
 }
 
 /* Add any additional custom styles here if necessary */
@@ -355,7 +429,7 @@
 
 .swiper-slide-reviews {
     width: 100%;
-    height: 370px !important;
+    height: 500px !important;
     display: flex;
     justify-content: center;
 }
@@ -368,7 +442,7 @@
     width: 500px;
     height: 7vh;
     box-sizing: border-box;
-   padding: 12px 20px;
+   padding: 6px 20px;
     display: flex;
     justify-items: center;
     align-items: center;
@@ -379,7 +453,7 @@
 
 .footer-contain .btn-Buy {
     width: 100%;
-
+    
     cursor: pointer;
 }
 
@@ -411,21 +485,23 @@
 
   .image-container {
     width: 327px;
-    height: 120px;
+    height: 170px;
     overflow: hidden;
   }
   .image-width {
-   width: 100%;
-   height: 120px !important;
+   /* width: 100%; */
+   
+   height: 100% !important;
 object-fit: cover;
     border-radius: 8px;
+    margin: auto 0 !important;
   }
 
 
   @media (max-width:500px) {
     .footer-contain {
         width: 100%;
-        height: 7vh;
+        height: 10vh;
         box-sizing: border-box;
        padding: 12px 20px;
         display: flex;
@@ -460,6 +536,9 @@ line-height: 19.2px !important;
 
 }
 
+.text-red-500{
+    font-size: 14px;
+}
 body {
     font-family: "Almarai", sans-serif !important;
 }
